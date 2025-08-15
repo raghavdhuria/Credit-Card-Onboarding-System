@@ -46,6 +46,7 @@ const Chatbot = () => {
 
       const data = await response.json();
       const botMessage = { sender: 'bot', text: data.reply };
+      console.log(botMessage); 
       setChatHistory(prevChatHistory => [...prevChatHistory, botMessage]);
     } catch (error) {
       console.error('Error sending message:', error);

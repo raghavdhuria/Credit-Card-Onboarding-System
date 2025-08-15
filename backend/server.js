@@ -278,7 +278,7 @@ app.post('/api/apply', auth, upload.single('document'), async (req, res) => {
     form.append('aadhaar', aadhaar);
 
     // Call OCR service
-    const ocrResponse = await axios.post('http://localhost:5001/ocr', form, {
+    const ocrResponse = await axios.post('http://ocr-service:5001/ocr', form, {
       headers: {
         ...form.getHeaders()
       }
