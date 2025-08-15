@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Select, MenuItem, FormControl, InputLabel, Typography, Container, Paper, TextField, CircularProgress } from '@mui/material';
 import './Chatbot.css';
 
 const Chatbot = () => {
@@ -58,63 +57,49 @@ const Chatbot = () => {
   };
 
   return (
-    <Container component="main" maxWidth="sm">
-      <Paper elevation={3} className="chatbot-paper">
-        <Typography component="h1" variant="h5">
-          Welcome to the Credit Card Onboarding Portal
-        </Typography>
-        <Typography component="p" variant="body1" className="chatbot-text">
-          Please select a rewards category to find the best credit card for you.
-        </Typography>
-        <FormControl fullWidth className="category-select">
-          <InputLabel id="category-select-label">Rewards Category</InputLabel>
-          <Select
-            labelId="category-select-label"
-            id="category-select"
-            value={selectedCategory}
-            label="Rewards Category"
-            onChange={handleCategoryChange}
-          >
-            {categories.map(category => (
-              <MenuItem key={category} value={category}>{category}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          disabled={!selectedCategory}
-          className="proceed-button"
-          onClick={handleProceed}
-        >
-          Proceed to Application
-        </Button>
-
-        <div className="chat-container">
+    <div className="container">
+      <div className="chatbot-container">
+        <div className="chatbot-sidebar">
+          <h2>Welcome!</h2>
+          <p>Select a rewards category to find the best credit card for you.</p>
+          <div className="category-select-container">
+            <label htmlFor="category-select">Rewards Category</label>
+            <select id="category-select" value={selectedCategory} onChange={handleCategoryChange}>
+              <option value="">-- Select a Category --</option>
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+          <button className="proceed-button" onClick={handleProceed} disabled={!selectedCategory}>
+            Proceed to Application
+          </button>
+        </div>
+        <div className="chatbot-main">
           <div className="chat-history">
             {chatHistory.map((chat, index) => (
               <div key={index} className={`chat-message ${chat.sender}`}>
-                <p>{chat.text}</p>
+                <div className="avatar">{chat.sender === 'user' ? 'U' : 'B'}</div>
+                <div className="message-content">
+                  <p>{chat.text}</p>
+                </div>
               </div>
             ))}
-            {loading && <div className="loading-spinner"><CircularProgress /></div>}
+            {loading && <div className="loading-spinner">Loading...</div>}
           </div>
           <div className="chat-input">
-            <TextField
-              fullWidth
-              variant="outlined"
+            <input
+              type="text"
               placeholder="Type your message..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             />
-            <Button variant="contained" color="primary" onClick={handleSendMessage}>Send</Button>
+            <button onClick={handleSendMessage}>Send</button>
           </div>
         </div>
-      </Paper>
-    </Container>
+      </div>
+    </div>
   );
 };
 

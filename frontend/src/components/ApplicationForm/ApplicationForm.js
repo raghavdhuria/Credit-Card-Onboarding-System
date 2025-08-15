@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button, TextField, Typography, Container, Paper, Input } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import './ApplicationForm.css';
 
@@ -76,144 +75,71 @@ const ApplicationForm = () => {
   };
 
   return (
-    <Container component="main" maxWidth="md">
-      <Paper elevation={3} className="application-paper">
-        <Typography component="h1" variant="h5">
-          Credit Card Application
-        </Typography>
-        {cardName && (
-          <Typography component="h2" variant="h6">
-            Applying for: {cardName}
-          </Typography>
-        )}
-        <form className="application-form" onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="cardName"
-            label="Card Name"
-            name="cardName"
-            value={formData.cardName}
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="name"
-            label="Full Name"
-            name="name"
-            autoComplete="name"
-            onChange={handleChange}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="address"
-            label="Address"
-            name="address"
-            autoComplete="address"
-            onChange={handleChange}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="contact"
-            label="Contact Number"
-            name="contact"
-            autoComplete="tel"
-            onChange={handleChange}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="dob"
-            label="Date of Birth"
-            name="dob"
-            type="date"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={handleChange}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="pan"
-            label="PAN Card Number"
-            name="pan"
-            onChange={handleChange}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="aadhaar"
-            label="Aadhaar Card Number"
-            name="aadhaar"
-            onChange={handleChange}
-          />
-          <Input
-            type="file"
-            id="document"
-            name="document"
-            onChange={handleFileChange}
-            fullWidth
-            required
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className="submit-button"
-          >
-            Submit Application
-          </Button>
-        </form>
-        {isLoading && <p>Loading...</p>}
-        {verificationResult && (
-          <div className="verification-results">
-            <h3>Verification Results</h3>
-            {verificationResult.verificationResults && (
-              <div>
-                <h4>Matched Fields:</h4>
-                <ul>
-                  {Object.entries(verificationResult.verificationResults)
-                    .filter(([, value]) => value)
-                    .map(([key]) => (
-                      <li key={key}>{key}</li>
-                    ))}
-                </ul>
-                <h4>Unmatched Fields:</h4>
-                <ul>
-                  {Object.entries(verificationResult.verificationResults)
-                    .filter(([, value]) => !value)
-                    .map(([key]) => (
-                      <li key={key}>{key}</li>
-                    ))}
-                </ul>
-              </div>
-            )}
-             
-          </div>
-        )}
-      </Paper>
-    </Container>
+    <div className="container">
+      <div className="application-container">
+        <div className="application-form-container">
+          <h2>Credit Card Application</h2>
+          {cardName && <p>Applying for: {cardName}</p>}
+          <form className="application-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="name">Full Name</label>
+              <input type="text" id="name" name="name" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="address">Address</label>
+              <input type="text" id="address" name="address" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="contact">Contact Number</label>
+              <input type="text" id="contact" name="contact" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="dob">Date of Birth</label>
+              <input type="date" id="dob" name="dob" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="pan">PAN Card Number</label>
+              <input type="text" id="pan" name="pan" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="aadhaar">Aadhaar Card Number</label>
+              <input type="text" id="aadhaar" name="aadhaar" onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="document">Upload Document</label>
+              <input type="file" id="document" name="document" onChange={handleFileChange} required />
+            </div>
+            <button type="submit">Submit Application</button>
+          </form>
+        </div>
+        <div className="verification-results-container">
+          <h3>Verification Results</h3>
+          {isLoading && <div className="loading-indicator">Loading...</div>}
+          {verificationResult && (
+            <div>
+              <h4>Matched Fields:</h4>
+              <ul>
+                {Object.entries(verificationResult.verificationResults)
+                  .filter(([, value]) => value)
+                  .map(([key]) => (
+                    <li key={key}>{key}</li>
+                  ))}
+              </ul>
+              <h4>Unmatched Fields:</h4>
+              <ul>
+                {Object.entries(verificationResult.verificationResults)
+                  .filter(([, value]) => !value)
+                  .map(([key]) => (
+                    <li key={key}>{key}</li>
+                  ))}
+              </ul>
+              <h4>Extracted Text from Document:</h4>
+              <p>{verificationResult.ocrText}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,15 +1,20 @@
+
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import SignIn from './components/SignIn/SignIn';
 import SignUp from './components/SignUp/SignUp';
 import Chatbot from './components/Chatbot/Chatbot';
 import ApplicationForm from './components/ApplicationForm/ApplicationForm';
 import CategoryInfo from './components/CategoryInfo/CategoryInfo';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from './components/Navbar/Navbar';
 
 function App() {
+  const location = useLocation();
+  const showNavbar = location.pathname !== '/' && location.pathname !== '/signup';
+
   return (
-    <Router>
+    <>
+      {showNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
@@ -17,8 +22,16 @@ function App() {
         <Route path="/apply" element={<ApplicationForm />} />
         <Route path="/category-info/:categoryName" element={<CategoryInfo />} />
       </Routes>
+    </>
+  );
+}
+
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
     </Router>
   );
 }
 
-export default App;
+export default AppWrapper;

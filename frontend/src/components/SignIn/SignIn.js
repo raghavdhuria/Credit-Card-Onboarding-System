@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, TextField, Typography, Container, Paper } from '@mui/material';
-import './SignIn.css';
+import '../Auth.css';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -35,56 +34,38 @@ const SignIn = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={3} className="signin-paper">
-        <Typography component="h1" variant="h5">
-          Credit Card Onboarding Portal
-        </Typography>
-        <Typography component="h2" variant="h6">
-          Sign In
-        </Typography>
-        <form className="signin-form" onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className="signin-submit"
-          >
-            Sign In
-          </Button>
-          <Link to="/signup" className="signup-link">
-            {"Don't have an account? Sign Up"}
-          </Link>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1>Credit Card Onboarding</h1>
+        <h2>Sign In</h2>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit">Sign In</button>
         </form>
-      </Paper>
-    </Container>
+        <Link to="/signup" className="auth-link">
+          Don't have an account? Sign Up
+        </Link>
+      </div>
+    </div>
   );
 };
 

@@ -22,36 +22,25 @@ const CategoryInfo = () => {
   };
 
   return (
-    <div className="category-info-container">
-      <div className="header-container">
-        <h2>{categoryName}</h2>
+    <div className="container">
+      <div className="category-info-container">
+        <div className="category-info-header">
+          <h2>{categoryName} Credit Cards</h2>
+        </div>
+        <div className="card-grid">
+          {tableData.map((card, index) => (
+            <div key={index} className="credit-card">
+              <h3>{card['Card Name']}</h3>
+              <p><strong>Bank:</strong> {card.Bank}</p>
+              <p><strong>Rewards Rate:</strong> {card['Rewards Rate']}</p>
+              <p><strong>Annual Fee:</strong> {card['Annual Fee']}</p>
+              <button className="apply-button" onClick={() => handleApply(card['Card Name'])}>
+                Apply Now
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-      {tableData.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              {Object.keys(tableData[0]).map((key) => (
-                <th key={key}>{key}</th>
-              ))}
-              <th>Apply</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.map((row, index) => (
-              <tr key={index}>
-                {Object.values(row).map((value, i) => (
-                  <td key={i}>{value}</td>
-                ))}
-                <td>
-                  <button className="apply-button" onClick={() => handleApply(row[Object.keys(row)[0]])}>
-                    Apply
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
     </div>
   );
 };
