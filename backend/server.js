@@ -266,7 +266,7 @@ app.post('/api/signin', async (req, res) => {
 // --- Application Route ---
 app.post('/api/apply', auth, upload.single('document'), async (req, res) => {
   try {
-    const { name, address, contact, dob, pan, aadhaar } = req.body;
+    const { name, address, contact, dob, pan, aadhaar, cardName } = req.body;
     const documentPath = req.file.path;
 
     // Create a form data object to send to the python service
@@ -295,6 +295,7 @@ app.post('/api/apply', auth, upload.single('document'), async (req, res) => {
       dob,
       pan,
       aadhaar,
+      cardName,
       documentPath,
       ocrText,
       verificationResults

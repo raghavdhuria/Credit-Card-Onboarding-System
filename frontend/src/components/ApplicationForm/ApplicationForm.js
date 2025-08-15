@@ -1,13 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, TextField, Typography, Container, Paper, Input } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import './ApplicationForm.css';
 
 const ApplicationForm = () => {
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const selectedCategory = queryParams.get('category');
+  const { cardName } = location.state || {};
 
   const [formData, setFormData] = useState({
     name: '',
@@ -17,7 +16,12 @@ const ApplicationForm = () => {
     pan: '',
     aadhaar: '',
     document: null,
+    cardName: cardName || '',
   });
+
+  useEffect(() => {
+    setFormData((prevFormData) => ({ ...prevFormData, cardName: cardName || '' }));
+  }, [cardName]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -40,10 +44,25 @@ const ApplicationForm = () => {
         <Typography component="h1" variant="h5">
           Credit Card Application
         </Typography>
-        <Typography component="h2" variant="h6">
-          Selected Category: {selectedCategory}
-        </Typography>
+        {cardName && (
+          <Typography component="h2" variant="h6">
+            Applying for: {cardName}
+          </Typography>
+        )}
         <form className="application-form" onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="cardName"
+            label="Card Name"
+            name="cardName"
+            value={formData.cardName}
+            InputProps={{
+              readOnly: true,
+            }}
+          />
           <TextField
             variant="outlined"
             margin="normal"
