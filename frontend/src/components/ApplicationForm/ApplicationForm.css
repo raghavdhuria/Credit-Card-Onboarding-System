@@ -1,4 +1,3 @@
-
 .application-paper {
   margin-top: 8px;
   display: flex;
@@ -14,4 +13,12 @@
 
 .submit-button {
   margin-top: 24px;
+}
+
+.verification-results {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
 }

@@ -1,10 +1,16 @@
 
 from flask import Flask, request, jsonify
-import pytesseract
+import google.generativeai as genai
 from PIL import Image
 import io
+import os
+import time
+import json
 
 app = Flask(__name__)
+
+# Configure the Gemini API key
+genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 
 @app.route('/ocr', methods=['POST'])
 def ocr():
@@ -23,36 +29,60 @@ def ocr():
         dob = form_data.get('dob', '')
         aadhaar = form_data.get('aadhaar', '')
 
-        # Perform OCR
+        # Prepare the image for Gemini
         image = Image.open(io.BytesIO(file.read()))
-        ocr_text = pytesseract.image_to_string(image).lower()
 
-        # Perform comparison
-        verification_results = {}
-        if name and name.lower() in ocr_text:
-            verification_results['nameMatch'] = True
-        else:
-            verification_results['nameMatch'] = False
+        # Create the prompt for Gemini
+        prompt = f"""
+        You are a document verification assistant. Your task is to compare the information provided in a form with the information present in an uploaded document image. 
 
-        if pan and pan.lower() in ocr_text:
-            verification_results['panMatch'] = True
-        else:
-            verification_results['panMatch'] = False
+        Form Data:
+        - Name: {name}
+        - PAN Card: {pan}
+        - Date of Birth: {dob}
+        - Aadhaar Card: {aadhaar}
 
-        if dob and dob in ocr_text:
-            verification_results['dobMatch'] = True
-        else:
-            verification_results['dobMatch'] = False
+        Instructions:
+        1. Analyze the uploaded document image and extract the relevant information.
+        2. Compare the extracted information with the provided form data.
+        3. For each field (Name, PAN Card, Date of Birth, Aadhaar Card), determine if there is a match.
+        4. A match is considered successful if the value from the form is present in the document.
+        5. It is okay if some information is in the form but not in the document, or vice-versa. Your primary goal is to verify the information that is present in both.
+        6. Return a JSON object with the verification results. The JSON object should have the following format:
+        {{
+            "nameMatch": boolean,
+            "panMatch": boolean,
+            "dobMatch": boolean,
+            "aadhaarMatch": boolean
+        }}
+        """
 
-        if aadhaar and aadhaar in ocr_text:
-            verification_results['aadhaarMatch'] = True
-        else:
-            verification_results['aadhaarMatch'] = False
+        # Call the Gemini API
+        for i in range(3):
+            try:
+                model = genai.GenerativeModel('gemini-1.5-flash-latest')
+                response = model.generate_content([prompt, image])
 
-        return jsonify({
-            'ocrText': ocr_text,
-            'verificationResults': verification_results
-        })
+                import json
+
+# ... (rest of the imports)
+
+# ... (inside the ocr function)
+
+                # Extract the JSON from the response
+                cleaned_json = response.text.replace('```json', '').replace('```', '').strip()
+                verification_results = json.loads(cleaned_json)
+
+                return jsonify({
+                    'ocrText': response.text, # For debugging purposes
+                    'verificationResults': verification_results
+                })
+            except Exception as e:
+                if i < 2: # if not the last attempt
+                    time.sleep(1) # wait for 1 second before retrying
+                    continue
+                else:
+                    raise e
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

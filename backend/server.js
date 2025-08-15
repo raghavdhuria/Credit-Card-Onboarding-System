@@ -268,7 +268,7 @@ app.post('/api/apply', auth, upload.single('document'), async (req, res) => {
   try {
     const { name, address, contact, dob, pan, aadhaar, cardName } = req.body;
     const documentPath = req.file.path;
-
+    console.log(name, address, contact, dob, pan, aadhaar, cardName); 
     // Create a form data object to send to the python service
     const form = new FormData();
     form.append('file', fs.createReadStream(documentPath));
@@ -283,8 +283,9 @@ app.post('/api/apply', auth, upload.single('document'), async (req, res) => {
         ...form.getHeaders()
       }
     });
-
+    
     const { ocrText, verificationResults } = ocrResponse.data;
+    console.log(ocrText, verificationResults)
 
     // Create new application
     const newApplication = new Application({

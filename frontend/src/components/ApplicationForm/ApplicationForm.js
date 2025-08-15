@@ -32,10 +32,47 @@ const ApplicationForm = () => {
     setFormData({ ...formData, document: event.target.files[0] });
   };
 
-  const handleSubmit = (event) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [verificationResult, setVerificationResult] = useState(null);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission logic here
-    console.log(formData);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You must be logged in to apply.');
+      return;
+    }
+
+    setIsLoading(true);
+    setVerificationResult(null);
+
+    const data = new FormData();
+    for (const key in formData) {
+      data.append(key, formData[key]);
+    }
+
+    try {
+      const response = await fetch('http://localhost:5301/api/apply', {
+        method: 'POST',
+        headers: {
+          'x-auth-token': token,
+        },
+        body: data,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setVerificationResult(result.application);
+      } else {
+        alert('Error submitting application: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      alert('An error occurred while submitting the application.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -148,6 +185,33 @@ const ApplicationForm = () => {
             Submit Application
           </Button>
         </form>
+        {isLoading && <p>Loading...</p>}
+        {verificationResult && (
+          <div className="verification-results">
+            <h3>Verification Results</h3>
+            {verificationResult.verificationResults && (
+              <div>
+                <h4>Matched Fields:</h4>
+                <ul>
+                  {Object.entries(verificationResult.verificationResults)
+                    .filter(([, value]) => value)
+                    .map(([key]) => (
+                      <li key={key}>{key}</li>
+                    ))}
+                </ul>
+                <h4>Unmatched Fields:</h4>
+                <ul>
+                  {Object.entries(verificationResult.verificationResults)
+                    .filter(([, value]) => !value)
+                    .map(([key]) => (
+                      <li key={key}>{key}</li>
+                    ))}
+                </ul>
+              </div>
+            )}
+             
+          </div>
+        )}
       </Paper>
     </Container>
   );
