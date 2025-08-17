@@ -14,7 +14,8 @@ const ApplicationForm = () => {
     dob: '',
     pan: '',
     aadhaar: '',
-    document: null,
+    aadharFile: null,
+    panFile: null,
     cardName: cardName || '',
   });
 
@@ -28,7 +29,8 @@ const ApplicationForm = () => {
   };
 
   const handleFileChange = (event) => {
-    setFormData({ ...formData, document: event.target.files[0] });
+    const { name, files } = event.target;
+    setFormData({ ...formData, [name]: files[0] });
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +49,13 @@ const ApplicationForm = () => {
 
     const data = new FormData();
     for (const key in formData) {
-      data.append(key, formData[key]);
+      if (key === 'aadharFile' || key === 'panFile') {
+        if (formData[key]) {
+          data.append(key, formData[key]);
+        }
+      } else {
+        data.append(key, formData[key]);
+      }
     }
 
     try {
@@ -68,7 +76,13 @@ const ApplicationForm = () => {
       }
     } catch (error) {
       console.error('Error submitting application:', error);
-      alert('An error occurred while submitting the application.');
+      if (error.response && error.response.data && error.response.data.error) {
+        alert('Error submitting application: ' + error.response.data.error);
+      } else if (error.response && error.response.data && error.response.data.message) {
+        alert('Error submitting application: ' + error.response.data.message);
+      } else {
+        alert('An error occurred while submitting the application.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -82,32 +96,36 @@ const ApplicationForm = () => {
           {cardName && <p>Applying for: {cardName}</p>}
           <form className="application-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="name">Full Name <span style={{ color: 'red' }}>*</span></label>
               <input type="text" id="name" name="name" onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label htmlFor="address">Address</label>
+              <label htmlFor="address">Address <span style={{ color: 'red' }}>*</span></label>
               <input type="text" id="address" name="address" onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label htmlFor="contact">Contact Number</label>
+              <label htmlFor="contact">Contact Number <span style={{ color: 'red' }}>*</span></label>
               <input type="text" id="contact" name="contact" onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label htmlFor="dob">Date of Birth</label>
+              <label htmlFor="dob">Date of Birth <span style={{ color: 'red' }}>*</span></label>
               <input type="date" id="dob" name="dob" onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label htmlFor="pan">PAN Card Number</label>
+              <label htmlFor="pan">PAN Card Number <span style={{ color: 'red' }}>*</span></label>
               <input type="text" id="pan" name="pan" onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label htmlFor="aadhaar">Aadhaar Card Number</label>
+              <label htmlFor="aadhaar">Aadhaar Card Number <span style={{ color: 'red' }}>*</span></label>
               <input type="text" id="aadhaar" name="aadhaar" onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label htmlFor="document">Upload Document</label>
-              <input type="file" id="document" name="document" onChange={handleFileChange} required />
+              <label htmlFor="aadharFile">Upload Document (Aadhar) <span style={{ color: 'red' }}>*</span></label>
+              <input type="file" id="aadharFile" name="aadharFile" onChange={handleFileChange} accept="image/*" required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="panFile">Upload Document (PAN) <span style={{ color: 'red' }}>*</span></label>
+              <input type="file" id="panFile" name="panFile" onChange={handleFileChange} accept="image/*" required />
             </div>
             <button type="submit">Submit Application</button>
           </form>

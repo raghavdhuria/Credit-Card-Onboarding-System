@@ -13,7 +13,7 @@ const applicationSchema = new mongoose.Schema({
   dob: { type: String, required: true },
   pan: { type: String, required: true },
   aadhaar: { type: String, required: true },
-  documentPath: { type: String, required: true },
+  documentPaths: [{ type: String, required: true }],
   cardName: { type: String, required: true },
   ocrText: { type: String },
   verificationResults: {

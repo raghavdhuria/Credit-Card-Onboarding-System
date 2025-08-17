@@ -264,14 +264,17 @@ app.post('/api/signin', async (req, res) => {
 });
 
 // --- Application Route ---
-app.post('/api/apply', auth, upload.single('document'), async (req, res) => {
+app.post('/api/apply', auth, upload.fields([{ name: 'aadharFile', maxCount: 1 }, { name: 'panFile', maxCount: 1 }]), async (req, res) => {
   try {
     const { name, address, contact, dob, pan, aadhaar, cardName } = req.body;
-    const documentPath = req.file.path;
-    console.log(name, address, contact, dob, pan, aadhaar, cardName); 
+    const aadharPath = req.files.aadharFile[0].path;
+    const panPath = req.files.panFile[0].path;
+    const documentPaths = [aadharPath, panPath];
+
     // Create a form data object to send to the python service
     const form = new FormData();
-    form.append('file', fs.createReadStream(documentPath));
+    form.append('files', fs.createReadStream(aadharPath));
+    form.append('files', fs.createReadStream(panPath));
     form.append('name', name);
     form.append('pan', pan);
     form.append('dob', dob);
@@ -297,7 +300,7 @@ app.post('/api/apply', auth, upload.single('document'), async (req, res) => {
       pan,
       aadhaar,
       cardName,
-      documentPath,
+      documentPaths,
       ocrText,
       verificationResults
     });
